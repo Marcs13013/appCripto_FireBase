@@ -1,34 +1,34 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ImageBackground } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, ImageBackground } from 'react-native';
 import { firestore } from '../firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { collection, addDoc } from 'firebase/firestore';
 
-export default function AlterarCriptos({ route, navigation }) {
-    const id = route.params.id;
-    const [nomeCripto, setnomeCripto] = useState(route.params.nomeCripto); 
-    const [siglaCripto, setsiglaCripto] = useState(route.params.siglaCripto);
-    const [valorCripto, setvalorCripto] = useState(route.params.valorCripto);
+export default function CadastrarCriptos({ navigation }) {
+    const [nomeCripto, setnomeCripto] = useState('');
+    const [siglaCripto, setsiglaCripto] = useState('');
+    const [valorCripto, setvalorCripto] = useState('');
 
-    async function alterarCripto() {
+    async function addCripto() {
         try {
-            await updateDoc(doc(firestore, "tbmoeda", id), {
+            const docRef = await addDoc(collection(firestore, 'tbmoeda'), {
                 nomeCripto: nomeCripto,
                 siglaCripto: siglaCripto,
                 valorCripto: valorCripto,
             });
-            Alert.alert("Sucesso", "Criptomoeda alterada com sucesso");
+            console.log("Cadastrado com sucesso", docRef.id);
+            Alert.alert("Cadastro", "Criptomoeda cadastrada com sucesso");
             navigation.navigate("Home");
         } catch (erro) {
-            console.log("Erro ao alterar criptomoeda", erro);
-            Alert.alert("Erro", "Erro ao alterar criptomoeda");
+            console.log("Erro ao cadastrar criptomoeda", erro);
+            Alert.alert("Erro", "Erro ao cadastrar criptomoeda");
         }
     }
 
     return (
-            <ImageBackground source={require('../assets/webimage-12B7D506-A311-4B19-99871314F525675F.jpg')} style={estilo.fundo}>
+               <ImageBackground source={require('../assets/criptomoedas_03-1200x800.jpg')} style={estilo.fundo}>
         <View style={estilo.container}>
             <View>
-                <Text style={estilo.titulo}>Alterar dados da Criptomoeda</Text>
+                <Text style={estilo.titulo}>Cadastrar Criptomoeda</Text>
             </View>
             <TextInput
                 autoCapitalize='words'
@@ -53,9 +53,9 @@ export default function AlterarCriptos({ route, navigation }) {
             />
             <TouchableOpacity
                 style={estilo.btenviar}
-                onPress={alterarCripto}
+                onPress={addCripto}
             >
-                <Text style={estilo.btntxtenviar}>Alterar</Text>
+                <Text style={estilo.btntxtenviar}>Enviar</Text>
             </TouchableOpacity>
         </View>
         </ImageBackground>
@@ -73,14 +73,14 @@ const estilo = StyleSheet.create({
     fundo: {
         flex: 1,
     },
-
+    
     titulo: {
         backgroundColor: 'rgba(0,0,0,0.5)',
-        margin: 10,
         padding: 18,
-        borderRadius: 22, 
+        borderRadius: 22,
         color: 'white',
         fontSize: 25,
+        marginVertical: 20,
         textAlign: 'center',
         fontWeight: 'bold',
     },
